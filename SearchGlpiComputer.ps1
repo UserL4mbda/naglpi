@@ -1,8 +1,8 @@
 # Run F5 before usage
 # Test avec le ticket 218
-# Search-GlpiComputerFromTicket -TicketId 218 | Out-NagiosFile
+# Get-GlpiComputerFromTicket -TicketId 218 | Out-NagiosFile
 
-function Search-GlpiComputerFromTicket{
+function Get-GlpiComputerFromTicket{
     param($TicketId)
 
     Get-GLPITicketDevices -Id $TicketId | ?{
