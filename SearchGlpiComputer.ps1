@@ -54,7 +54,7 @@ function Out-NagiosFile {
 }
 
 function Stop-DockerSupervision {
-    Docker stop supervision
+    docker stop supervision
 }
 
 function Start-DockerSupervision {
