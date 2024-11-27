@@ -4,7 +4,8 @@
 
 # The line below states we will base our new image on the Latest Official Ubuntu 
 # The source is: https://hub.docker.com/r/jasonrivers/nagios/dockerfile
-FROM jasonrivers/nagios:latest as build
+#FROM jasonrivers/nagios:latest as build
+FROM jasonrivers/nagios:4.4.14 as build
 
 LABEL maintainer="stephane.dany@greta06.fr"
 
