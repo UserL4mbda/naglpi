@@ -2,6 +2,9 @@
 # Test avec le ticket 218
 # Get-GlpiComputerFromTicket -TicketId 218 | Out-NagiosFile
 
+# Si l'on veut tous les ordinateurs du lieu attribué au ticket:
+# Get-GlpiComputerFromTicketLocation -TicketId 218 | Out-NagiosFile
+
 function Get-GlpiComputerFromTicket{
     param($TicketId)
 
@@ -9,6 +12,43 @@ function Get-GlpiComputerFromTicket{
         $_.Type -eq 'Computer'} | %{
             GLPIComputer -Id $_.Id}
 }
+
+function Get-GlpiComputerFromTicketLocation {
+    param($TicketId)
+
+    Get-GLPIType -Type Ticket -Id $TicketId | Select-Object -ExpandProperty locations_id | Get-GlpiComputerFromLocation
+}
+
+function Get-GlpiComputerFromLocation {
+    param (
+        [Parameter(ValueFromPipeline=$true, Mandatory=$true)]
+        [int]$LocationId
+    )
+
+    $allSites = @($LocationId) + (Get-ChildLocations -ParentId $LocationId | Select-Object -ExpandProperty id)
+
+    $computers = Get-GLPIType -Type Computer | Where-Object { $allSites -contains $_.locations_id }
+
+    return $computers
+}
+
+# Utilisez la fonction avec l'ID du site parent
+#Get-ChildLocations -ParentId 83
+function Get-ChildLocations {
+    param (
+        [int]$ParentId
+    )
+
+    $childLocations = Get-GlPIType -Type Location | Where-Object { $_.locations_id -eq $ParentId }
+    
+    foreach ($location in $childLocations) {
+        $location
+        Get-ChildLocations -ParentId $location.id
+    }
+}
+
+# Utilisez la fonction avec l'ID du site parent
+#Get-ChildLocations -ParentId 83
 
 function TextDevice{
     param ($Device)
