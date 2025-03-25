@@ -5,6 +5,16 @@
 # Si l'on veut tous les ordinateurs du lieu attribué au ticket:
 # Get-GlpiComputerFromTicketLocation -TicketId 218 | Out-NagiosFile
 
+function Show-ComputerLocationStatus {
+    Get-GLPIType -Type Location |
+        ?{$_.entities_id -eq 1} |
+        Select id, completename, name |
+        ogv -PassThru |
+        select -ExpandProperty id |
+        Get-GlpiComputerFromLocation |
+        Out-NagiosFile
+}
+
 function Get-GlpiComputerFromTicket{
     param($TicketId)
 
@@ -51,7 +61,10 @@ function Get-ChildLocations {
 #Get-ChildLocations -ParentId 83
 
 function TextDevice{
-    param ($Device)
+    param (
+        $Device,
+        $Parent = "localhost"
+    )
 
     $name = $Device.name
 
@@ -60,7 +73,7 @@ define host {
     use                     generic-computer
     host_name               $name
     alias                   $name
-    parents                 localhost
+    parents                 $Parent
 }
 
 "@
